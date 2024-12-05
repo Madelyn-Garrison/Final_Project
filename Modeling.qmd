@@ -144,9 +144,11 @@ cbind(c("Tree 1","Tree 2","Tree 3"),rbind(best_tree_1[1,],best_tree_2[1,], best_
 
 The second model is best for the regression tree.
 
-The second model family was supposed to be random forest. The random forest creates many trees from repeated bootstrap samples
+The second model family was supposed to be random forest. The random forest creates many trees from repeated bootstrap samples and then averages those trees into the final tree. The random forest uses subsets of predictors to create each tree, keeping an overly strong predictor from skewing the model. The main differnce between random forest and classification tree is multiple trees vs just one from the entire data set.
 
+I attempted to use random forest, but R never finished fitting the CV folds. The computation just never finished. R on my computer has been slow lately, eventually completely failing to respond and forcing me to quit, and I'm running low on storage space. R is up to date, but one of the other things could be affecting it. Bottom line, I couldn't create any random forest models. Instead, I used logistic regression for second family.
 
+Logistic regression is a model that uses a linear model predicts classification, similar to a classification tree. Coefficients of the model represent the change in log-odds of the outcome. A classification tree is non-linear and less structured than logistic regression.
 
 This is the model specification for a logistic regression.
 

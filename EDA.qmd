@@ -10,7 +10,7 @@ The data set we are working with is the Diabetes Health Indicators Dataset. The 
 
 In this analysis, the important variables we are considering are HighBP, HighChol, BMI, AnyHealthcare, Age, GenHlth, and Income. HighBP and HighChol are binary variables for whether or not a person has high blood pressure or high cholesterol, respectively. BMI is the body mass index. AnyHealthcare is a binary variable for having any type of health care access. Age places an individual's age into one of 13 different age groups. GenHlth has an individual rate their overall health from 1-5. Income places an individual's income into one of 8 different groups.
 
-Here we will perform some exploratory data analysis, do gain a better understanding of our data. 
+Here we will perform some exploratory data analysis, do gain a better understanding of our data.
 
 ## EDA
 
@@ -32,7 +32,7 @@ colSums(is.na(my_diabetes_data))
 unique(my_diabetes_data$Diabetes_binary)
 ```
 
-We'll convert many of our variables into factors with meaningful names. 
+We'll convert many of our variables into factors with meaningful names.
 
 ```{r}
 my__data<-my_diabetes_data|>

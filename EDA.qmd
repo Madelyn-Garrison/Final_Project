@@ -4,29 +4,19 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+The data set we are working with is the Diabetes Health Indicators Dataset. The data set contains 22 variables for 253,680 individuals. Those variables include whether or not a person has diabetes, demographic factors, and lifestyle characteristics. Essentially, we will be using the variables in this data set to create a model to predict whether or not a person has diabetes.
 
-## Running Code
+In this analysis, the important variables we are considering are HighBP, HighChol, BMI, AnyHealthcare, Age, GenHlth, and Income. HighBP and HighChol are binary variables for whether or not a person has high blood pressure or high cholesterol, respectively. BMI is the body mass index. AnyHealthcare is a binary variable for having any type of health care access. Age places an individual's age into one of 13 different age groups. GenHlth has an individual rate their overall health from 1-5. Income places an individual's income into one of 8 different groups.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Here we will perform some exploratory data analysis, do gain a better understanding of our data. 
 
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this
+## EDA
 
 ```{r}
+#| include: false
 #| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
-
-
-```{r}
 library(tidyverse)
 library(ggcorrplot)
 ```
@@ -35,10 +25,14 @@ library(ggcorrplot)
 my_diabetes_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")
 ```
 
+First, we check for missing data. There is none.
+
 ```{r}
 colSums(is.na(my_diabetes_data))
 unique(my_diabetes_data$Diabetes_binary)
 ```
+
+We'll convert many of our variables into factors with meaningful names. 
 
 ```{r}
 my__data<-my_diabetes_data|>
@@ -65,16 +59,43 @@ my__data<-my_diabetes_data|>
 
 ```
 
+Next, I'm going to create a correlation matrix, to understand the realtionship between the variables. This matrix helps to decide which variables will be important for our model.
+
 ```{r}
 corr <- cor(my_diabetes_data)
 ggcorrplot(corr,
            type = "lower")
 ```
 
+Create bar plots or histograms for the variables we care about.
+
 ```{r}
-table(my__data$Diabetes_binary)
+ggplot(my__data, aes(x=BMI)) + 
+  geom_histogram()
+
+ggplot(my__data, aes(x=HighBP)) + 
+  geom_bar()
+
+ggplot(my__data, aes(x=HighChol)) + 
+  geom_bar()
+
+ggplot(my__data, aes(x=AnyHealthcare)) + 
+  geom_bar()
+
+ggplot(my__data, aes(x=Age)) + 
+  geom_bar()
+
+ggplot(my__data, aes(x=GenHlth)) + 
+  geom_bar()
+
+ggplot(my__data, aes(x=Income)) + 
+  geom_bar()
+
+ggplot(my__data, aes(x=Diabetes_binary)) + 
+  geom_bar() 
 ```
 
+This bar plot and table show the relationship between Diabetes and General Health, putting emphasis on the presence of diabetes in the different health categories.
 
 ```{r}
 table(my__data$Diabetes_binary, my__data$GenHlth)
@@ -83,12 +104,25 @@ ggplot(my__data, aes(x=Diabetes_binary))+
   facet_wrap(~GenHlth)
 ```
 
+Our correlation matrix shows a relationship between General Health and Income. We'll create an additional bar plot that shows that the distribution of General Health is not consistent across income levels.
+
 ```{r}
 table(my__data$GenHlth, my__data$Income)
 ggplot(my__data, aes(x=GenHlth))+
   geom_bar()+
   facet_wrap(~Income)
 ```
+
+Just income and diabetes.
+
+```{r}
+table(my__data$Diabetes_binary, my__data$Income)
+ggplot(my__data, aes(x=Diabetes_binary))+
+  geom_bar()+
+  facet_wrap(~Income)
+```
+
+Distribution of diabetes based on blood pressure level.
 
 ```{r}
 table(my__data$Diabetes_binary, my__data$HighBP)
@@ -97,6 +131,8 @@ ggplot(my__data, aes(x=Diabetes_binary))+
   facet_wrap(~HighBP)
 ```
 
+Distribution of diabetes based on cholesterol level.
+
 ```{r}
 table(my__data$Diabetes_binary, my__data$HighChol)
 ggplot(my__data, aes(x=Diabetes_binary))+
@@ -104,23 +140,33 @@ ggplot(my__data, aes(x=Diabetes_binary))+
   facet_wrap(~HighChol)
 ```
 
+Distribution of diabetes based on healthcare access.
 
+```{r}
+table(my__data$Diabetes_binary, my__data$AnyHealthcare)
+ggplot(my__data, aes(x=Diabetes_binary))+
+  geom_bar()+
+  facet_wrap(~AnyHealthcare)
+```
 
+Distribution of diabetes based on age.
 
+```{r}
+table(my__data$Diabetes_binary, my__data$Age)
+ggplot(my__data, aes(x=Diabetes_binary))+
+  geom_bar()+
+  facet_wrap(~Age)
+```
 
+Summary statistics and histogram of BMI for each diabetes classification.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```{r}
+my__data |>
+  summarize(mean=mean(BMI), sd=sd(BMI), range = (max(BMI)-min(BMI)))
+my__data |>
+  group_by(Diabetes_binary)|>
+  summarize(mean=mean(BMI), sd=sd(BMI), range = (max(BMI)-min(BMI)))
+ggplot(my__data, aes(x=BMI))+
+  geom_histogram()+
+  facet_wrap(~Diabetes_binary)
+```

@@ -1,0 +1,66 @@
+---
+title: "EDA"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+my_diabetes_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")
+```
+
+```{r}
+colSums(is.na(my_diabetes_data))
+unique(my_diabetes_data$Diabetes_binary)
+```
+
+```{r}
+my_diabetes_data<-my_diabetes_data|>
+  mutate(Fruits=factor(ifelse(Fruits==0, "No fruit", "Fruit")),
+         Stroke=ifelse(Stroke==0, "No stroke", "Stroke"),
+         Smoker=ifelse(Smoker==0, "No 100 cigs", "100 cigs"),
+         HeartDiseaseorAttack=ifelse(HeartDiseaseorAttack==0, "No CHD/MI", "CHD/MI"),
+         PhysActivity=ifelse(PhysActivity==0, "No physical activity past 30 days", "Physical activity past 30 days"),
+         CholCheck=ifelse(CholCheck==0, "No cholesterol check in 5 years", "Cholesterol check in past 5 years"),
+         HighChol=ifelse(HighChol==0, "No high cholesterol", "High cholesterol"),
+         HighBP=ifelse(HighBP==0, "No high blood pressure", "High blood pressure"),
+         Diabetes_binary=ifelse(Diabetes_binary==0, "No diabetes", "Diabetes"),
+         Veggies=ifelse(Veggies==0, "No veggies", "Veggies"),
+         HvyAlcoholConsump=ifelse(HvyAlcoholConsump==0, "Not heavy Drinker", "Heavy Drinker"),
+         AnyHealthcare=ifelse(AnyHealthcare==0, "No healthcare", "Healthcare"),
+         NoDocbcCost=ifelse(NoDocbcCost==0, "No doctor", "Doctor"),
+         GenHlth=ifelse(GenHlth==1, "Excellent", ifelse(GenHlth==2, "Very good", ifelse(GenHlth==3, "Good", ifelse(GenHlth==4, "Fair", "Poor")))),
+         DiffWalk=ifelse(DiffWalk==0, "Can walk", "Difficult walking"),
+         Sex=ifelse(Sex==0, "female", "male"))
+
+```
+
+```{r}
+
+```
+

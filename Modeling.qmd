@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "Modeling"
 format: html
 editor: visual
 ---
@@ -25,24 +25,15 @@ You can add options to executable code like this
 
 The `echo: false` option disables the printing of code (only output is displayed).
 
-
 ```{r}
 library(tidyverse)
-library(ggcorrplot)
+library(tidymodels)
 ```
 
-```{r}
-my_diabetes_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")
-```
 
 ```{r}
-colSums(is.na(my_diabetes_data))
-unique(my_diabetes_data$Diabetes_binary)
-```
-
-```{r}
-my__data<-my_diabetes_data|>
-  mutate(Fruits=as.factor(ifelse(Fruits==0, "No fruit", "Fruit")),
+my_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")|>
+    mutate(Fruits=as.factor(ifelse(Fruits==0, "No fruit", "Fruit")),
          Stroke=as.factor(ifelse(Stroke==0, "No stroke", "Stroke")),
          Smoker=as.factor(ifelse(Smoker==0, "No 100 cigs", "100 cigs")),
          HeartDiseaseorAttack=as.factor(ifelse(HeartDiseaseorAttack==0, "No CHD/MI", "CHD/MI")),
@@ -54,7 +45,6 @@ my__data<-my_diabetes_data|>
          Veggies=as.factor(ifelse(Veggies==0, "No veggies", "Veggies")),
          HvyAlcoholConsump=as.factor(ifelse(HvyAlcoholConsump==0, "Not heavy Drinker", "Heavy Drinker")),
          AnyHealthcare=as.factor(ifelse(AnyHealthcare==0, "No healthcare", "Healthcare")),
-         NoDocbcCost=as.factor(ifelse(NoDocbcCost==0, "No doctor", "Doctor")),
          GenHlth=as.factor(ifelse(GenHlth==1, "Excellent", ifelse(GenHlth==2, "Very good", ifelse(GenHlth==3, "Good", ifelse(GenHlth==4, "Fair", "Poor"))))),
          DiffWalk=as.factor(ifelse(DiffWalk==0, "Can walk", "Difficult walking")),
          Sex=as.factor(ifelse(Sex==0, "female", "male")),
@@ -62,51 +52,92 @@ my__data<-my_diabetes_data|>
          Education=as.factor(Education),
          Income=as.factor(Income)
          )
+```
+
+```{r}
+set.seed(15)
+data_split <- initial_split(my_data, prop = 0.70)
+data_train <- training(data_split)
+data_test <- testing(data_split)
+data_5_fold <- vfold_cv(data_train, 5)
 
 ```
 
 ```{r}
-corr <- cor(my_diabetes_data)
-ggcorrplot(corr,
-           type = "lower")
+tree_rec_1 <- recipe(Diabetes_binary ~ HighBP + HighChol + BMI + AnyHealthcare + Age, data = data_train) |>
+  step_dummy(HighBP,HighChol,AnyHealthcare,Age)
+tree_rec_2 <- recipe(Diabetes_binary ~ HighBP + HighChol + BMI + AnyHealthcare + Age + GenHlth, data = data_train) |>
+  step_dummy(HighBP,HighChol,AnyHealthcare,Age,GenHlth)
+tree_rec_3 <- recipe(Diabetes_binary ~ HighBP + HighChol + BMI + AnyHealthcare + Age + Income, data = data_train) |>
+  step_dummy(HighBP,HighChol,AnyHealthcare,Age,Income)
 ```
 
 ```{r}
-table(my__data$Diabetes_binary)
-```
+tree_mod <- decision_tree(tree_depth = tune(),
+                          min_n = 20,
+                          cost_complexity = tune()) |>
+  set_engine("rpart") |>
+  set_mode("classification")
 
 
-```{r}
-table(my__data$Diabetes_binary, my__data$GenHlth)
-ggplot(my__data, aes(x=Diabetes_binary))+
-  geom_bar()+
-  facet_wrap(~GenHlth)
-```
-
-```{r}
-table(my__data$GenHlth, my__data$Income)
-ggplot(my__data, aes(x=GenHlth))+
-  geom_bar()+
-  facet_wrap(~Income)
 ```
 
 ```{r}
-table(my__data$Diabetes_binary, my__data$HighBP)
-ggplot(my__data, aes(x=Diabetes_binary))+
-  geom_bar()+
-  facet_wrap(~HighBP)
+tree_wkf_1 <- workflow() |>
+  add_recipe(tree_rec_1) |>
+  add_model(tree_mod)
+
+temp_1 <- tree_wkf_1 |> 
+  tune_grid(resamples = data_5_fold, metrics = metric_set(mn_log_loss))
+temp_1 |> 
+  collect_metrics()
+
+temp_1 |>
+  collect_metrics() |>
+  arrange(mean)
 ```
 
 ```{r}
-table(my__data$Diabetes_binary, my__data$HighChol)
-ggplot(my__data, aes(x=Diabetes_binary))+
-  geom_bar()+
-  facet_wrap(~HighChol)
+tree_wkf_2 <- workflow() |>
+  add_recipe(tree_rec_2) |>
+  add_model(tree_mod)
+
+temp_2 <- tree_wkf_2 |> 
+  tune_grid(resamples = data_5_fold, metrics = metric_set(mn_log_loss))
+temp_2 |> 
+  collect_metrics()
+
+temp_2 |>
+  collect_metrics() |>
+  arrange(mean)
+
 ```
 
+```{r}
+tree_wkf_3 <- workflow() |>
+  add_recipe(tree_rec_3) |>
+  add_model(tree_mod)
 
+temp_3 <- tree_wkf_3 |> 
+  tune_grid(resamples = data_5_fold, metrics = metric_set(mn_log_loss))
+temp_3 |> 
+  collect_metrics()
 
+temp_3 |>
+  collect_metrics() |>
+  arrange(mean)
+```
 
+```{r}
+best_tree_1<-temp_1 |>collect_metrics() |>arrange(mean)
+best_tree_2<-temp_2 |>collect_metrics() |>arrange(mean)
+best_tree_3<-temp_3 |>collect_metrics() |>arrange(mean)
+cbind(c("Tree 1","Tree 2","Tree 3"),rbind(best_tree_1[1,],best_tree_2[1,], best_tree_3[1,]))
+```
+
+```{r}
+
+```
 
 
 

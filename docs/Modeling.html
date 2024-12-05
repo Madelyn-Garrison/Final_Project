@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Modeling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Modeling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The data set we are working with is the Diabetes Health Indicators Dataset. The data set contains 22 variables for 253,680 individuals. Those variables include whether or not a person has diabetes, demographic factors, and lifestyle characteristics. Essentially, we will be using the variables in this data set to create a model to predict whether or not a person has diabetes.</p>
+<p>In this analysis, the important variables we are considering are HighBP, HighChol, BMI, AnyHealthcare, Age, GenHlth, and Income. HighBP and HighChol are binary variables for whether or not a person has high blood pressure or high cholesterol, respectively. BMI is the body mass index. AnyHealthcare is a binary variable for having any type of health care access. Age places an individual’s age into one of 13 different age groups. GenHlth has an individual rate their overall health from 1-5. Income places an individual’s income into one of 8 different groups.</p>
+<p>Here, we will create several different models from two different families of models to find the best one for our data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>my_data<span class="ot">&lt;-</span><span class="fu">read_csv</span>(<span class="st">"diabetes_binary_health_indicators_BRFSS2015.csv"</span>)<span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Fruits=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Fruits<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No fruit"</span>, <span class="st">"Fruit"</span>)),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Stroke=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Stroke<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No stroke"</span>, <span class="st">"Stroke"</span>)),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">Smoker=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Smoker<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No 100 cigs"</span>, <span class="st">"100 cigs"</span>)),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">HeartDiseaseorAttack=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(HeartDiseaseorAttack<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No CHD/MI"</span>, <span class="st">"CHD/MI"</span>)),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">PhysActivity=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(PhysActivity<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No physical activity past 30 days"</span>, <span class="st">"Physical activity past 30 days"</span>)),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">CholCheck=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(CholCheck<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No cholesterol check in 5 years"</span>, <span class="st">"Cholesterol check in past 5 years"</span>)),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">HighChol=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(HighChol<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No high cholesterol"</span>, <span class="st">"High cholesterol"</span>)),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">HighBP=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(HighBP<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No high blood pressure"</span>, <span class="st">"High blood pressure"</span>)),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">Diabetes_binary=</span><span class="fu">as.factor</span>(Diabetes_binary),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">Veggies=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Veggies<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No veggies"</span>, <span class="st">"Veggies"</span>)),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">HvyAlcoholConsump=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(HvyAlcoholConsump<span class="sc">==</span><span class="dv">0</span>, <span class="st">"Not heavy Drinker"</span>, <span class="st">"Heavy Drinker"</span>)),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">AnyHealthcare=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(AnyHealthcare<span class="sc">==</span><span class="dv">0</span>, <span class="st">"No healthcare"</span>, <span class="st">"Healthcare"</span>)),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">GenHlth=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(GenHlth<span class="sc">==</span><span class="dv">1</span>, <span class="st">"Excellent"</span>, <span class="fu">ifelse</span>(GenHlth<span class="sc">==</span><span class="dv">2</span>, <span class="st">"Very good"</span>, <span class="fu">ifelse</span>(GenHlth<span class="sc">==</span><span class="dv">3</span>, <span class="st">"Good"</span>, <span class="fu">ifelse</span>(GenHlth<span class="sc">==</span><span class="dv">4</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span>))))),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">DiffWalk=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(DiffWalk<span class="sc">==</span><span class="dv">0</span>, <span class="st">"Can walk"</span>, <span class="st">"Difficult walking"</span>)),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">Sex=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Sex<span class="sc">==</span><span class="dv">0</span>, <span class="st">"female"</span>, <span class="st">"male"</span>)),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">Age=</span><span class="fu">as.factor</span>(Age),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">Education=</span><span class="fu">as.factor</span>(Education),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">Income=</span><span class="fu">as.factor</span>(Income)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 253680 Columns: 22
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>We are going to split the data into a training and test set, with a 70/30 split, and we are going to create a 5 fold CV split.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(my_data, <span class="at">prop =</span> <span class="fl">0.70</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>data_train <span class="ot">&lt;-</span> <span class="fu">training</span>(data_split)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>data_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(data_split)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>data_5_fold <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(data_train, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We are going to be comparing three different recipes. The first one uses HighBP, HighChol, BMI, AnyHealthcare, and Age as predictors. The second one uses HighBP, HighChol, BMI, AnyHealthcare, Age, and GenHlth as predictors. The third one uses HighBP, HighChol, BMI, AnyHealthcare, Age, and Income as predictors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tree_rec_1 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Diabetes_binary <span class="sc">~</span> HighBP <span class="sc">+</span> HighChol <span class="sc">+</span> BMI <span class="sc">+</span> AnyHealthcare <span class="sc">+</span> Age, <span class="at">data =</span> data_train) <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(HighBP,HighChol,AnyHealthcare,Age)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>tree_rec_2 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Diabetes_binary <span class="sc">~</span> HighBP <span class="sc">+</span> HighChol <span class="sc">+</span> BMI <span class="sc">+</span> AnyHealthcare <span class="sc">+</span> Age <span class="sc">+</span> GenHlth, <span class="at">data =</span> data_train) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(HighBP,HighChol,AnyHealthcare,Age,GenHlth)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>tree_rec_3 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Diabetes_binary <span class="sc">~</span> HighBP <span class="sc">+</span> HighChol <span class="sc">+</span> BMI <span class="sc">+</span> AnyHealthcare <span class="sc">+</span> Age <span class="sc">+</span> Income, <span class="at">data =</span> data_train) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(HighBP,HighChol,AnyHealthcare,Age,Income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The first model we will be using is a classification tree. Tree-based methods break up predictors into regions. Then each of those regions can have regions and so on. The easiest way to understand this is to visualize a flow chart. Each branch creates a new region. A classification tree, as opposed to a regression tree, predicts class membership rather than a continuous response. It will then use the most common classification in a region as the predicted classification.</p>
+<p>This is the model specification for a classification tree.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tree_mod <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">tree_depth =</span> <span class="fu">tune</span>(),</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">min_n =</span> <span class="dv">20</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create the workflow and determine which tuning parameter is best for Recipe 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tree_wkf_1 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(tree_rec_1) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(tree_mod)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>temp_1 <span class="ot">&lt;-</span> tree_wkf_1 <span class="sc">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> data_5_fold, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>temp_1 <span class="sc">|&gt;</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   cost_complexity tree_depth .metric     .estimator  mean     n std_err .config
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+ 1        1.35e- 8         13 mn_log_loss binary     0.349     5 0.00284 Prepro…
+ 2        3.22e- 6          5 mn_log_loss binary     0.357     5 0.00171 Prepro…
+ 3        4.14e- 4         10 mn_log_loss binary     0.357     5 0.00176 Prepro…
+ 4        8.40e- 7          9 mn_log_loss binary     0.350     5 0.00175 Prepro…
+ 5        4.93e- 5         11 mn_log_loss binary     0.356     5 0.00189 Prepro…
+ 6        1.94e- 3          8 mn_log_loss binary     0.394     5 0.00783 Prepro…
+ 7        1.77e- 9          3 mn_log_loss binary     0.403     5 0.00162 Prepro…
+ 8        2.57e- 7          1 mn_log_loss binary     0.403     5 0.00162 Prepro…
+ 9        8.14e- 2         15 mn_log_loss binary     0.403     5 0.00162 Prepro…
+10        1.28e-10          5 mn_log_loss binary     0.357     5 0.00171 Prepro…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>temp_1 <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   cost_complexity tree_depth .metric     .estimator  mean     n std_err .config
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+ 1        1.35e- 8         13 mn_log_loss binary     0.349     5 0.00284 Prepro…
+ 2        8.40e- 7          9 mn_log_loss binary     0.350     5 0.00175 Prepro…
+ 3        4.93e- 5         11 mn_log_loss binary     0.356     5 0.00189 Prepro…
+ 4        4.14e- 4         10 mn_log_loss binary     0.357     5 0.00176 Prepro…
+ 5        3.22e- 6          5 mn_log_loss binary     0.357     5 0.00171 Prepro…
+ 6        1.28e-10          5 mn_log_loss binary     0.357     5 0.00171 Prepro…
+ 7        1.94e- 3          8 mn_log_loss binary     0.394     5 0.00783 Prepro…
+ 8        1.77e- 9          3 mn_log_loss binary     0.403     5 0.00162 Prepro…
+ 9        2.57e- 7          1 mn_log_loss binary     0.403     5 0.00162 Prepro…
+10        8.14e- 2         15 mn_log_loss binary     0.403     5 0.00162 Prepro…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tree_best_params_1 <span class="ot">&lt;-</span> <span class="fu">select_best</span>(temp_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in select_best(temp_1): No value of `metric` was given; "mn_log_loss"
+will be used.</code></pre>
+</div>
+</div>
+<p>Create the workflow and determine which tuning parameter is best for Recipe 2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tree_wkf_2 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(tree_rec_2) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(tree_mod)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>temp_2 <span class="ot">&lt;-</span> tree_wkf_2 <span class="sc">|&gt;</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> data_5_fold, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>temp_2 <span class="sc">|&gt;</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   cost_complexity tree_depth .metric     .estimator  mean     n std_err .config
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+ 1        3.05e-10          5 mn_log_loss binary     0.356     5 1.71e-3 Prepro…
+ 2        6.10e- 2         12 mn_log_loss binary     0.403     5 1.62e-3 Prepro…
+ 3        1.27e- 6          6 mn_log_loss binary     0.353     5 2.53e-3 Prepro…
+ 4        6.11e- 3          3 mn_log_loss binary     0.403     5 1.62e-3 Prepro…
+ 5        1.68e- 5         13 mn_log_loss binary     0.337     5 2.03e-3 Prepro…
+ 6        4.39e- 9          8 mn_log_loss binary     0.338     5 1.63e-3 Prepro…
+ 7        2.02e- 4         10 mn_log_loss binary     0.355     5 6.11e-4 Prepro…
+ 8        3.21e- 8          2 mn_log_loss binary     0.403     5 1.62e-3 Prepro…
+ 9        1.44e- 7          7 mn_log_loss binary     0.345     5 1.59e-3 Prepro…
+10        3.52e- 5         14 mn_log_loss binary     0.338     5 1.52e-3 Prepro…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>temp_2 <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   cost_complexity tree_depth .metric     .estimator  mean     n std_err .config
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+ 1        1.68e- 5         13 mn_log_loss binary     0.337     5 2.03e-3 Prepro…
+ 2        3.52e- 5         14 mn_log_loss binary     0.338     5 1.52e-3 Prepro…
+ 3        4.39e- 9          8 mn_log_loss binary     0.338     5 1.63e-3 Prepro…
+ 4        1.44e- 7          7 mn_log_loss binary     0.345     5 1.59e-3 Prepro…
+ 5        1.27e- 6          6 mn_log_loss binary     0.353     5 2.53e-3 Prepro…
+ 6        2.02e- 4         10 mn_log_loss binary     0.355     5 6.11e-4 Prepro…
+ 7        3.05e-10          5 mn_log_loss binary     0.356     5 1.71e-3 Prepro…
+ 8        6.10e- 2         12 mn_log_loss binary     0.403     5 1.62e-3 Prepro…
+ 9        6.11e- 3          3 mn_log_loss binary     0.403     5 1.62e-3 Prepro…
+10        3.21e- 8          2 mn_log_loss binary     0.403     5 1.62e-3 Prepro…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tree_best_params_2 <span class="ot">&lt;-</span> <span class="fu">select_best</span>(temp_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in select_best(temp_2): No value of `metric` was given; "mn_log_loss"
+will be used.</code></pre>
+</div>
+</div>
+<p>Create the workflow and determine which tuning parameter is best for Recipe 3.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tree_wkf_3 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(tree_rec_3) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(tree_mod)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>temp_3 <span class="ot">&lt;-</span> tree_wkf_3 <span class="sc">|&gt;</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(<span class="at">resamples =</span> data_5_fold, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>temp_3 <span class="sc">|&gt;</span> </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   cost_complexity tree_depth .metric     .estimator  mean     n std_err .config
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+ 1        6.72e- 7          4 mn_log_loss binary     0.358     5 0.00169 Prepro…
+ 2        5.76e- 8         15 mn_log_loss binary     0.347     5 0.00335 Prepro…
+ 3        3.15e- 8          9 mn_log_loss binary     0.350     5 0.00202 Prepro…
+ 4        3.46e- 2          2 mn_log_loss binary     0.403     5 0.00162 Prepro…
+ 5        1.95e- 9          3 mn_log_loss binary     0.403     5 0.00162 Prepro…
+ 6        1.24e- 3          5 mn_log_loss binary     0.376     5 0.0103  Prepro…
+ 7        1.17e- 4          7 mn_log_loss binary     0.357     5 0.00172 Prepro…
+ 8        4.37e- 6         10 mn_log_loss binary     0.350     5 0.00213 Prepro…
+ 9        2.15e- 3         12 mn_log_loss binary     0.403     5 0.00162 Prepro…
+10        1.60e-10         13 mn_log_loss binary     0.347     5 0.00296 Prepro…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>temp_3 <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 8
+   cost_complexity tree_depth .metric     .estimator  mean     n std_err .config
+             &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+ 1        1.60e-10         13 mn_log_loss binary     0.347     5 0.00296 Prepro…
+ 2        5.76e- 8         15 mn_log_loss binary     0.347     5 0.00335 Prepro…
+ 3        4.37e- 6         10 mn_log_loss binary     0.350     5 0.00213 Prepro…
+ 4        3.15e- 8          9 mn_log_loss binary     0.350     5 0.00202 Prepro…
+ 5        1.17e- 4          7 mn_log_loss binary     0.357     5 0.00172 Prepro…
+ 6        6.72e- 7          4 mn_log_loss binary     0.358     5 0.00169 Prepro…
+ 7        1.24e- 3          5 mn_log_loss binary     0.376     5 0.0103  Prepro…
+ 8        3.46e- 2          2 mn_log_loss binary     0.403     5 0.00162 Prepro…
+ 9        1.95e- 9          3 mn_log_loss binary     0.403     5 0.00162 Prepro…
+10        2.15e- 3         12 mn_log_loss binary     0.403     5 0.00162 Prepro…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>tree_best_params_3 <span class="ot">&lt;-</span> <span class="fu">select_best</span>(temp_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in select_best(temp_3): No value of `metric` was given; "mn_log_loss"
+will be used.</code></pre>
+</div>
+</div>
+<p>Here, we’ll compare the three models and choose the best, based on the lowest mn_log_loss.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>best_tree_1<span class="ot">&lt;-</span>temp_1 <span class="sc">|&gt;</span><span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span><span class="fu">arrange</span>(mean)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>best_tree_2<span class="ot">&lt;-</span>temp_2 <span class="sc">|&gt;</span><span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span><span class="fu">arrange</span>(mean)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>best_tree_3<span class="ot">&lt;-</span>temp_3 <span class="sc">|&gt;</span><span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span><span class="fu">arrange</span>(mean)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">c</span>(<span class="st">"Tree 1"</span>,<span class="st">"Tree 2"</span>,<span class="st">"Tree 3"</span>),<span class="fu">rbind</span>(best_tree_1[<span class="dv">1</span>,],best_tree_2[<span class="dv">1</span>,], best_tree_3[<span class="dv">1</span>,]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  c("Tree 1", "Tree 2", "Tree 3") cost_complexity tree_depth     .metric
+1                          Tree 1    1.354271e-08         13 mn_log_loss
+2                          Tree 2    1.679638e-05         13 mn_log_loss
+3                          Tree 3    1.596664e-10         13 mn_log_loss
+  .estimator      mean n     std_err               .config
+1     binary 0.3489373 5 0.002841894 Preprocessor1_Model01
+2     binary 0.3368196 5 0.002028390 Preprocessor1_Model05
+3     binary 0.3466514 5 0.002962748 Preprocessor1_Model10</code></pre>
+</div>
+</div>
+<p>The second model is best for the regression tree.</p>
+<p>The second model family was supposed to be random forest. The random forest creates many trees from repeated bootstrap samples and then averages those trees into the final tree. The random forest uses subsets of predictors to create each tree, keeping an overly strong predictor from skewing the model. The main differnce between random forest and classification tree is multiple trees vs just one from the entire data set.</p>
+<p>I attempted to use random forest, but R never finished fitting the CV folds. The computation just never finished. R on my computer has been slow lately, eventually completely failing to respond and forcing me to quit, and I’m running low on storage space. R is up to date, but one of the other things could be affecting it. Bottom line, I couldn’t create any random forest models. Instead, I used logistic regression for second family.</p>
+<p>Logistic regression is a model that uses a linear model predicts classification, similar to a classification tree. Coefficients of the model represent the change in log-odds of the outcome. A classification tree is non-linear and less structured than logistic regression.</p>
+<p>This is the model specification for a logistic regression.</p>
+<p>Create the workflow and fit the 5 fold CV to all 3 recipes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>LR_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">set_engine</span>(<span class="st">"glm"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>LR1_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_recipe</span>(tree_rec_1) <span class="sc">|&gt;</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_model</span>(LR_spec)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>LR2_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_recipe</span>(tree_rec_2) <span class="sc">|&gt;</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_model</span>(LR_spec)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>LR3_wkf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_recipe</span>(tree_rec_3) <span class="sc">|&gt;</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_model</span>(LR_spec)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>LR1_fit <span class="ot">&lt;-</span> LR1_wkf <span class="sc">|&gt;</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit_resamples</span>(data_5_fold, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>LR2_fit <span class="ot">&lt;-</span> LR2_wkf <span class="sc">|&gt;</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit_resamples</span>(data_5_fold, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>LR3_fit <span class="ot">&lt;-</span> LR3_wkf <span class="sc">|&gt;</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit_resamples</span>(data_5_fold, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, we’ll compare the three models and choose the best, based on the lowest mn_log_loss.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">c</span>(<span class="st">"LR 1"</span>,<span class="st">"LR 2"</span>,<span class="st">"LR 3"</span>),<span class="fu">rbind</span>(LR1_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a> LR2_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a> LR3_fit <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  c("LR 1", "LR 2", "LR 3")     .metric .estimator      mean n     std_err
+1                      LR 1 mn_log_loss     binary 0.3395850 5 0.001525192
+2                      LR 2 mn_log_loss     binary 0.3209221 5 0.001192447
+3                      LR 3 mn_log_loss     binary 0.3344738 5 0.001432342
+               .config
+1 Preprocessor1_Model1
+2 Preprocessor1_Model1
+3 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>The second model is best for the logistic regression.</p>
+<p>Refit the logistic regression model to the full data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">last_fit</span>(LR2_wkf, data_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))<span class="sc">|&gt;</span><span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  .metric     .estimator .estimate .config             
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 mn_log_loss binary         0.323 Preprocessor1_Model1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>complete_LR<span class="ot">&lt;-</span><span class="fu">last_fit</span>(LR2_wkf, data_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))<span class="sc">|&gt;</span><span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Refit the classification tree model to the full data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>tree_final_wkf <span class="ot">&lt;-</span> tree_wkf_2 <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(tree_best_params_2)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>tree_final_fit <span class="ot">&lt;-</span> tree_final_wkf <span class="sc">|&gt;</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(data_split, <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss))</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>tree_final_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Resampling results
+# Manual resampling 
+# A tibble: 1 × 6
+  splits                 id            .metrics .notes   .predictions .workflow 
+  &lt;list&gt;                 &lt;chr&gt;         &lt;list&gt;   &lt;list&gt;   &lt;list&gt;       &lt;list&gt;    
+1 &lt;split [177576/76104]&gt; train/test s… &lt;tibble&gt; &lt;tibble&gt; &lt;tibble&gt;     &lt;workflow&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>tree_final_fit <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  .metric     .estimator .estimate .config             
+  &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 mn_log_loss binary         0.339 Preprocessor1_Model1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>complete_tree<span class="ot">&lt;-</span>tree_final_fit <span class="sc">|&gt;</span><span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compare the two best models to choose the best overall model, based on lowest mn_log_loss.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">c</span>(<span class="st">"Tree"</span>,<span class="st">"LR"</span>),<span class="fu">rbind</span>(complete_tree, complete_LR))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  c("Tree", "LR")     .metric .estimator .estimate              .config
+1            Tree mn_log_loss     binary 0.3394528 Preprocessor1_Model1
+2              LR mn_log_loss     binary 0.3230969 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<p>The logistic regression model is better.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

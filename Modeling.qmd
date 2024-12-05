@@ -4,32 +4,21 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+The data set we are working with is the Diabetes Health Indicators Dataset. The data set contains 22 variables for 253,680 individuals. Those variables include whether or not a person has diabetes, demographic factors, and lifestyle characteristics. Essentially, we will be using the variables in this data set to create a model to predict whether or not a person has diabetes.
 
-## Running Code
+In this analysis, the important variables we are considering are HighBP, HighChol, BMI, AnyHealthcare, Age, GenHlth, and Income. HighBP and HighChol are binary variables for whether or not a person has high blood pressure or high cholesterol, respectively. BMI is the body mass index. AnyHealthcare is a binary variable for having any type of health care access. Age places an individual's age into one of 13 different age groups. GenHlth has an individual rate their overall health from 1-5. Income places an individual's income into one of 8 different groups.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this
+Here, we will create several different models from two different families of models to find the best one for our data set.
 
 ```{r}
+#| include: false
 #| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
-
-```{r}
 library(tidyverse)
 library(tidymodels)
+library(ranger)
 ```
-
 
 ```{r}
 my_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")|>
@@ -41,7 +30,7 @@ my_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")|>
          CholCheck=as.factor(ifelse(CholCheck==0, "No cholesterol check in 5 years", "Cholesterol check in past 5 years")),
          HighChol=as.factor(ifelse(HighChol==0, "No high cholesterol", "High cholesterol")),
          HighBP=as.factor(ifelse(HighBP==0, "No high blood pressure", "High blood pressure")),
-         Diabetes_binary=ifelse(Diabetes_binary==0, "No diabetes", "Diabetes"),
+         Diabetes_binary=as.factor(Diabetes_binary),
          Veggies=as.factor(ifelse(Veggies==0, "No veggies", "Veggies")),
          HvyAlcoholConsump=as.factor(ifelse(HvyAlcoholConsump==0, "Not heavy Drinker", "Heavy Drinker")),
          AnyHealthcare=as.factor(ifelse(AnyHealthcare==0, "No healthcare", "Healthcare")),
@@ -54,14 +43,17 @@ my_data<-read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")|>
          )
 ```
 
+We are going to split the data into a training and test set, with a 70/30 split, and we are going to create a 5 fold CV split.
+
 ```{r}
 set.seed(15)
 data_split <- initial_split(my_data, prop = 0.70)
 data_train <- training(data_split)
 data_test <- testing(data_split)
 data_5_fold <- vfold_cv(data_train, 5)
-
 ```
+
+We are going to be comparing three different recipes. The first one uses HighBP, HighChol, BMI, AnyHealthcare, and Age as predictors. The second one uses HighBP, HighChol, BMI, AnyHealthcare, Age, and GenHlth as predictors. The third one uses HighBP, HighChol, BMI, AnyHealthcare, Age, and Income as predictors.
 
 ```{r}
 tree_rec_1 <- recipe(Diabetes_binary ~ HighBP + HighChol + BMI + AnyHealthcare + Age, data = data_train) |>
@@ -72,15 +64,19 @@ tree_rec_3 <- recipe(Diabetes_binary ~ HighBP + HighChol + BMI + AnyHealthcare +
   step_dummy(HighBP,HighChol,AnyHealthcare,Age,Income)
 ```
 
+The first model we will be using is a classification tree. Tree-based methods break up predictors into regions. Then each of those regions can have regions and so on. The easiest way to understand this is to visualize a flow chart. Each branch creates a new region. A classification tree, as opposed to a regression tree, predicts class membership rather than a continuous response. It will then use the most common classification in a region as the predicted classification.
+
+This is the model specification for a classification tree.
+
 ```{r}
 tree_mod <- decision_tree(tree_depth = tune(),
                           min_n = 20,
                           cost_complexity = tune()) |>
   set_engine("rpart") |>
   set_mode("classification")
-
-
 ```
+
+Create the workflow and determine which tuning parameter is best for Recipe 1.
 
 ```{r}
 tree_wkf_1 <- workflow() |>
@@ -95,7 +91,11 @@ temp_1 |>
 temp_1 |>
   collect_metrics() |>
   arrange(mean)
+
+tree_best_params_1 <- select_best(temp_1)
 ```
+
+Create the workflow and determine which tuning parameter is best for Recipe 2.
 
 ```{r}
 tree_wkf_2 <- workflow() |>
@@ -111,7 +111,10 @@ temp_2 |>
   collect_metrics() |>
   arrange(mean)
 
+tree_best_params_2 <- select_best(temp_2)
 ```
+
+Create the workflow and determine which tuning parameter is best for Recipe 3.
 
 ```{r}
 tree_wkf_3 <- workflow() |>
@@ -126,7 +129,11 @@ temp_3 |>
 temp_3 |>
   collect_metrics() |>
   arrange(mean)
+
+tree_best_params_3 <- select_best(temp_3)
 ```
+
+Here, we'll compare the three models and choose the best, based on the lowest mn_log_loss.
 
 ```{r}
 best_tree_1<-temp_1 |>collect_metrics() |>arrange(mean)
@@ -135,23 +142,76 @@ best_tree_3<-temp_3 |>collect_metrics() |>arrange(mean)
 cbind(c("Tree 1","Tree 2","Tree 3"),rbind(best_tree_1[1,],best_tree_2[1,], best_tree_3[1,]))
 ```
 
-```{r}
+The second model is best for the regression tree.
 
+The second model family was supposed to be random forest. The random forest creates many trees from repeated bootstrap samples
+
+
+
+This is the model specification for a logistic regression.
+
+Create the workflow and fit the 5 fold CV to all 3 recipes.
+
+```{r}
+LR_spec <- logistic_reg() |>
+ set_engine("glm")
+
+LR1_wkf <- workflow() |>
+ add_recipe(tree_rec_1) |>
+ add_model(LR_spec)
+LR2_wkf <- workflow() |>
+ add_recipe(tree_rec_2) |>
+ add_model(LR_spec)
+LR3_wkf <- workflow() |>
+ add_recipe(tree_rec_3) |>
+ add_model(LR_spec)
+
+LR1_fit <- LR1_wkf |>
+ fit_resamples(data_5_fold, metrics = metric_set(mn_log_loss))
+LR2_fit <- LR2_wkf |>
+ fit_resamples(data_5_fold, metrics = metric_set(mn_log_loss))
+LR3_fit <- LR3_wkf |>
+ fit_resamples(data_5_fold, metrics = metric_set(mn_log_loss))
 ```
 
+Here, we'll compare the three models and choose the best, based on the lowest mn_log_loss.
 
+```{r}
+cbind(c("LR 1","LR 2","LR 3"),rbind(LR1_fit |> collect_metrics(),
+ LR2_fit |> collect_metrics(),
+ LR3_fit |> collect_metrics()))
+```
 
+The second model is best for the logistic regression.
 
+Refit the logistic regression model to the full data set.
 
+```{r}
+last_fit(LR2_wkf, data_split, metrics = metric_set(mn_log_loss))|>collect_metrics()
 
+complete_LR<-last_fit(LR2_wkf, data_split, metrics = metric_set(mn_log_loss))|>collect_metrics()
+```
 
+Refit the classification tree model to the full data set.
 
+```{r}
+tree_final_wkf <- tree_wkf_2 |>
+  finalize_workflow(tree_best_params_2)
 
+tree_final_fit <- tree_final_wkf |>
+  last_fit(data_split, metrics = metric_set(mn_log_loss))
+tree_final_fit
 
+tree_final_fit |>
+  collect_metrics()
 
+complete_tree<-tree_final_fit |>collect_metrics()
+```
 
+Compare the two best models to choose the best overall model, based on lowest mn_log_loss.
 
+```{r}
+cbind(c("Tree","LR"),rbind(complete_tree, complete_LR))
+```
 
-
-
-
+The logistic regression model is better.

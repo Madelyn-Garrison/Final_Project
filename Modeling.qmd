@@ -191,6 +191,8 @@ Refit the logistic regression model to the full data set.
 ```{r}
 last_fit(LR2_wkf, data_split, metrics = metric_set(mn_log_loss))|>collect_metrics()
 
+
+
 complete_LR<-last_fit(LR2_wkf, data_split, metrics = metric_set(mn_log_loss))|>collect_metrics()
 ```
 

@@ -60,9 +60,13 @@ function(num1, num2, num3, num4, num5, num6){
   predict(xx, xxx)
 }
 
+# High blood pressure ---- No high cholesterol ------ 40 ------- No healthcare -------- Poor -------- 8
+# High blood pressure ---- High cholesterol ------ 70 ------- Healthcare -------- Fair -------- 7
+# No igh blood pressure ---- No high cholesterol ------ 50 ------- Healthcare -------- Very Good -------- 6
+
 #* @get /info
 function(){
-  "Madelyn Garrison"
+  "Madelyn Garrison https://github.com/Madelyn-Garrison/Final_Project"
 }
 
 #* @serializer png

@@ -60,9 +60,10 @@ function(num1, num2, num3, num4, num5, num6){
   predict(xx, xxx)
 }
 
+# Example function calls
 # High blood pressure ---- No high cholesterol ------ 40 ------- No healthcare -------- Poor -------- 8
 # High blood pressure ---- High cholesterol ------ 70 ------- Healthcare -------- Fair -------- 7
-# No igh blood pressure ---- No high cholesterol ------ 50 ------- Healthcare -------- Good -------- 6
+# No high blood pressure ---- No high cholesterol ------ 50 ------- Healthcare -------- Good -------- 6
 
 #* @get /info
 function(){

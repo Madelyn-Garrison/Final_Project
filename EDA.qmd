@@ -170,3 +170,4 @@ ggplot(my__data, aes(x=BMI))+
   geom_histogram()+
   facet_wrap(~Diabetes_binary)
 ```
+[Click here for the Modeling Page](Modeling.html)
